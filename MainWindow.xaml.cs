@@ -1,13 +1,7 @@
-﻿using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows;
+using WMS_Suite.DataAccess;
+using WMS_Suite.Repositories;
+using WMS_Suite.ViewModels;
 
 namespace WMS_Suite
 {
@@ -19,6 +13,9 @@ namespace WMS_Suite
         public MainWindow()
         {
             InitializeComponent();
+            var context = new AppDbContext();
+            var repo = new InventoryRepository(context);
+            DataContext = new InventoryViewModel(repo);
         }
     }
 }
