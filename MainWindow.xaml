@@ -8,18 +8,21 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="75"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Grid.Row="0">
             <Button Content="Load Inventory" Command="{Binding LoadItemsCommand}" Margin="5"/>
             <Button Content="Add Item" Command="{Binding AddItemCommand}" Margin="5"/>
             <Button Content="Update Selected" Command="{Binding UpdateItemCommand}" Margin="5"/>
+            <Button Content="Edit Shopify Settings" Command="{Binding EditSettingsCommand}" Margin="5" Grid.Row="0"/>
+            <Button Content="Sync Shopify" Command="{Binding SyncShopifyCommand}" Margin="5" Grid.Row="0"/>
         </StackPanel>
 
         <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" AutoGenerateColumns="True" Grid.Row="1" Margin="5"/>
-
-        <TextBlock Text="{Binding Forecast}" Grid.Row="2" FontWeight="Bold"/>
-        <StackPanel Grid.Row="3">
+        <TextBlock Text="{Binding Mismatches}" Grid.Row="2" Margin="5" TextWrapping="Wrap"/>
+        <TextBlock Text="{Binding Forecast}" Grid.Row="3" FontWeight="Bold"/>
+        <StackPanel Grid.Row="4">
             <Button Content="Forecast Selected" Command="{Binding GetForecastCommand}" Margin="5" />
             <Button Content="Log Sale" Command="{Binding LogSaleCommand}" Margin="5"/>
             <Button Content="Generate Barcode" Command="{Binding GenerateBarcodeCommand}" Margin="5"/>

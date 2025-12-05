@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using WMS_Suite.DataContracts;
 using WMS_Suite.Repositories;
@@ -36,7 +37,15 @@ namespace WMS_Suite.ViewModels
             get => _forecast;
             set => SetProperty(ref _forecast, value);
         }
+        private string _mismatches;
+        public string Mismatches
+        {
+            get => _mismatches;
+            set => SetProperty(ref _mismatches, value);
+        }
 
+        public ICommand SyncShopifyCommand { get; }
+        public ICommand EditSettingsCommand { get; }
         public ICommand GetForecastCommand { get; }
 
         public ICommand LoadItemsCommand { get; }
@@ -59,6 +68,36 @@ namespace WMS_Suite.ViewModels
             LogSaleCommand = new RelayCommand(async _ => await LogSaleAsync(), _ => SelectedItem != null);
 
             GenerateBarcodeCommand = new RelayCommand(GenerateBarcode, _ => SelectedItem != null);
+
+            SyncShopifyCommand = new RelayCommand(async _ => await SyncShopifyAsync());
+            EditSettingsCommand = new RelayCommand(async _ => await EditSettingsAsync());
+        }
+
+        private async Task SyncShopifyAsync()
+        {
+            var settings = await _repository.GetSettingsAsync();
+            if (string.IsNullOrEmpty(settings.ShopifyAccessToken))
+            {
+                MessageBox.Show("Set Shopify credentials first.");
+                return;
+            }
+
+            Mismatches = ""; // Clear
+            var service = new ShopifyService(settings.ShopifyStoreUrl, settings.ShopifyAccessToken);
+            await service.SyncInventoryAsync(Items.ToList(), _repository, mismatch => Mismatches += mismatch + "\n");
+
+            // Refresh list after sync
+            await LoadItemsAsync();
+
+            if (SelectedItem != null) await GetForecastAsync();
+        }
+
+        private async Task EditSettingsAsync()
+        {
+            var settings = await _repository.GetSettingsAsync();
+            settings.ShopifyStoreUrl = Microsoft.VisualBasic.Interaction.InputBox("Store URL (e.g., mystore.myshopify.com):", DefaultResponse: settings.ShopifyStoreUrl ?? "");
+            settings.ShopifyAccessToken = Microsoft.VisualBasic.Interaction.InputBox("Access Token:", DefaultResponse: settings.ShopifyAccessToken ?? "");
+            await _repository.SaveSettingsAsync(settings);
         }
 
         private void GenerateBarcode(object parameter)

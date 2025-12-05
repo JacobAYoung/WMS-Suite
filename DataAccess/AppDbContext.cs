@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WMS_Suite.DataContracts;
+using WMS_Suite.Models;
 
 namespace WMS_Suite.DataAccess
 {
@@ -7,6 +8,8 @@ namespace WMS_Suite.DataAccess
     {
         public DbSet<InventoryItem> InventoryItems { get; set; }
         public DbSet<SalesHistory> SalesHistories { get; set; }
+
+        public DbSet<AppSettings> AppSettings { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

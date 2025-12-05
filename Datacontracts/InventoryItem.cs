@@ -8,6 +8,6 @@
         public int Quantity { get; set; }
         public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
     }
 }

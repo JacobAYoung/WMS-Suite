@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WMS_Suite.DataAccess;
 using WMS_Suite.DataContracts;
+using WMS_Suite.Models;
 
 namespace WMS_Suite.Repositories
 {
@@ -39,6 +40,28 @@ namespace WMS_Suite.Repositories
         public async Task<List<SalesHistory>> GetSalesForItemAsync(int itemId)
         {
             return await _context.SalesHistories.Where(h => h.InventoryItemId == itemId).ToListAsync();
+        }
+
+        public async Task<AppSettings> GetSettingsAsync()
+        {
+            return await _context.AppSettings.FirstOrDefaultAsync() ?? new AppSettings();
+        }
+
+        public async Task SaveSettingsAsync(AppSettings settings)
+        {
+            var existing = await _context.AppSettings.FindAsync(settings.Id);
+            if (existing == null)
+            {
+                _context.AppSettings.Add(settings);
+            }
+            else
+            {
+                // Copy properties to tracked entity
+                existing.ShopifyStoreUrl = settings.ShopifyStoreUrl;
+                existing.ShopifyAccessToken = settings.ShopifyAccessToken;
+                _context.AppSettings.Update(existing);
+            }
+            await _context.SaveChangesAsync();
         }
     }
 }

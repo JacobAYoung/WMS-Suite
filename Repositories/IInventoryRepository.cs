@@ -1,4 +1,5 @@
 ﻿using WMS_Suite.DataContracts;
+using WMS_Suite.Models;
 
 namespace WMS_Suite.Repositories
 {
@@ -11,5 +12,8 @@ namespace WMS_Suite.Repositories
 
         Task AddSalesHistoryAsync(SalesHistory history);
         Task<List<SalesHistory>> GetSalesForItemAsync(int itemId);
+
+        Task<AppSettings> GetSettingsAsync();
+        Task SaveSettingsAsync(AppSettings settings);
     }
 }
